@@ -58,12 +58,12 @@ Your answer should be structured, clear, concise, and demonstrate expertise in e
 """
 
 
-def llm(
+async def llm(
     system_message: str, messages: list[BaseMessage], temperature: float = 0.6
 ) -> str:
     LLM = ChatOpenAI(temperature=temperature, model_name="gpt-3.5-turbo")
     messages = [SystemMessage(content=system_message)] + messages
-    ai_msg = LLM.generate(
+    ai_msg = await LLM.agenerate(
         messages=[messages],
     )
     content = ai_msg.generations[0][0].message.content

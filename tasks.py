@@ -10,15 +10,16 @@ import textwrap
 import re
 
 # from utils import ask_gpt4
-import time
 from characters import elon_llm, gwynne_llm, marc_llm, steve_llm
 
 load_dotenv()
 
 
-def llm(messages: list, temperature=0, stop: str = None, model="gpt-3.5-turbo") -> str:
+async def llm(
+    messages: list, temperature=0, stop: str = None, model="gpt-3.5-turbo"
+) -> str:
     LLM = ChatOpenAI(temperature=temperature, model_name=model)
-    ai_msg = LLM.generate(
+    ai_msg = await LLM.agenerate(
         messages=[messages],
         stop=stop if stop else None,
     )
@@ -26,7 +27,7 @@ def llm(messages: list, temperature=0, stop: str = None, model="gpt-3.5-turbo") 
 
 
 ### Helper functions ###
-def create_title_from_content(content: str) -> str:
+async def create_title_from_content(content: str) -> str:
     prompt = textwrap.dedent(
         f"""
     Your task is to generate a fitting title for a topic of discussion. 
@@ -36,11 +37,11 @@ def create_title_from_content(content: str) -> str:
     Topic description: ```{content}```
     """
     ).strip()
-    title = llm(messages=[HumanMessage(content=prompt)], model="gpt-3.5-turbo")
+    title = await llm(messages=[HumanMessage(content=prompt)], model="gpt-3.5-turbo")
     return title
 
 
-def summarize_thread(messages: list[str]) -> str:
+async def summarize_thread(messages: list[str]) -> str:
     system_prompt = textwrap.dedent(
         """
     Please provide a comprehensive and accurate summary of the conversation 
@@ -51,11 +52,11 @@ def summarize_thread(messages: list[str]) -> str:
     ).strip()
     messages = [HumanMessage(content=message) for message in messages]
     messages.append(SystemMessage(content=system_prompt))
-    summary = llm(messages=messages, model="gpt-4", temperature=0.3)
+    summary = await llm(messages=messages, model="gpt-3.5-turbo", temperature=0.3)
     return summary
 
 
-def research_topic(prompt: str, max_questions: int = 5) -> str:
+async def research_topic(prompt: str, max_questions: int = 5) -> str:
     def _remove_numbered_bullet(text: str) -> str:
         # Define a regular expression pattern to match the number and bullet
         pattern = r"^\d+\.\s+"
@@ -97,7 +98,7 @@ def research_topic(prompt: str, max_questions: int = 5) -> str:
     ).strip()
 
     max_questions = max_questions if max_questions else 5
-    questions = llm(
+    questions = await llm(
         messages=[
             SystemMessage(content=invistigator_system_prompt),
             HumanMessage(content=prompt),
@@ -112,14 +113,14 @@ def research_topic(prompt: str, max_questions: int = 5) -> str:
     ]  # GPT has a tendency to let the first line be "Research topic: ..."
     messages = [SystemMessage(content=researcher_system_prompt)]
     for question in questions[:max_questions]:
-        time.sleep(7)
+        # time.sleep(7)
         messages.append(HumanMessage(content=question))
-        answer = llm(messages=messages, temperature=0.7, model="gpt-3.5-turbo")
+        answer = await llm(messages=messages, temperature=0.7, model="gpt-3.5-turbo")
         messages.append(AIMessage(content=answer))
         yield (question, answer)
 
 
-def council_meeting(prompt: str, context_msg: str, n_rounds: int = 1):
+async def council_meeting(prompt: str, context_msg: str, n_rounds: int = 1):
     n_rounds = n_rounds if n_rounds else 1
     BOARD_MEMBERS = [
         ("Elon Musk", elon_llm),
@@ -136,8 +137,8 @@ def council_meeting(prompt: str, context_msg: str, n_rounds: int = 1):
     )
     for i in range(n_rounds):
         for name, llm in BOARD_MEMBERS:
-            message = llm(messages=messages)
-            time.sleep(7)
+            message = await llm(messages=messages)
+            # time.sleep(7)
             message = f"{name}: {message}"
             messages.append(HumanMessage(content=message))
             yield (name, message)

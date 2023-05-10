@@ -8,7 +8,7 @@ from interactions import (
     SlashContext,
     OptionType,
 )
-import time
+import asyncio
 
 # from db import crud, db, models #FIXME Uncomment, when dumping data to db
 import importlib
@@ -97,7 +97,7 @@ async def gpt_session(
     n_rounds: int = None,
 ):
     await ctx.send(f"GPT {session_type} session has started!")
-    title = create_title_from_content(content=prompt)
+    title = await create_title_from_content(content=prompt)
     # Fetch the channel
     channel = await bot.fetch_channel(channel_id=GENERAL_CHANNEL_ID)
     if message_ids:
@@ -119,7 +119,7 @@ async def gpt_session(
         )
         messages = []
         research_session = research_topic(prompt=prompt, max_questions=n_rounds)
-        for question, answer in research_session:
+        async for question, answer in research_session:
             messages += [question, answer]
             await send_message(question, channel=new_thread, user="Investigator")
             await send_message(answer, channel=new_thread, user="GPT")
@@ -131,7 +131,7 @@ async def gpt_session(
         )
         messages = []
         council_session = council_meeting(prompt=prompt, context_msg=msg)
-        for member, message in council_session:
+        async for member, message in council_session:
             messages.append(message)
             await send_message(message, channel=new_thread, user=member)
     else:
@@ -140,8 +140,10 @@ async def gpt_session(
 
     if session_type in ["research", "council"]:
         # Post summary back to channel
-        summary = summarize_thread(messages=messages)
-        await ctx.send(summary)
+        summary = await summarize_thread(messages=messages)
+        await send_message(
+            f"Summary of the thread {title} \n\n{summary}", user="Summary"
+        )
 
 
 async def send_message(message, channel=None, user=None):
@@ -154,6 +156,22 @@ async def send_message(message, channel=None, user=None):
             avatar_url=AVATAR_URLS[user] if user in AVATAR_URLS else None,
             thread=channel if channel else None,
         )
+
+
+# def send_message(message, user, thread_id=None):
+#     # Split message into chunks of less than 2000 characters in order
+#     # to stay within Discord's message limit.
+#     msg_chunks = text_splitter.split_text(message)
+#     for msg_chunk in msg_chunks:
+#         response = requests.post(
+#             config["DISCORD_GENERAL_WEBHOOK"],
+#             data={
+#                 "content": msg_chunk,
+#                 "username": user,
+#                 "avatar_url": AVATAR_URLS[user] if user in AVATAR_URLS else None,
+#             },
+#             params={"thread_id": thread_id if thread_id else None},
+#         )
 
 
 # FIXME: Uncomment when dumping data to db
