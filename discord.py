@@ -158,22 +158,6 @@ async def send_message(message, channel=None, user=None):
         )
 
 
-# def send_message(message, user, thread_id=None):
-#     # Split message into chunks of less than 2000 characters in order
-#     # to stay within Discord's message limit.
-#     msg_chunks = text_splitter.split_text(message)
-#     for msg_chunk in msg_chunks:
-#         response = requests.post(
-#             config["DISCORD_GENERAL_WEBHOOK"],
-#             data={
-#                 "content": msg_chunk,
-#                 "username": user,
-#                 "avatar_url": AVATAR_URLS[user] if user in AVATAR_URLS else None,
-#             },
-#             params={"thread_id": thread_id if thread_id else None},
-#         )
-
-
 # FIXME: Uncomment when dumping data to db
 # @listen()
 # async def on_message_create(event):
@@ -190,6 +174,7 @@ async def send_message(message, channel=None, user=None):
 #         crud.discord.create(msg_obj)
 
 
+# FIXME: Uncomment when dumping data to db
 # @listen()
 # async def on_message_update(event):
 #     msg = event.after
