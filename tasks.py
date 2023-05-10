@@ -8,6 +8,7 @@ from langchain.schema import (
 from dotenv import load_dotenv
 import textwrap
 import re
+import asyncio
 
 # from utils import ask_gpt4
 from characters import elon_llm, gwynne_llm, marc_llm, steve_llm
@@ -52,7 +53,7 @@ async def summarize_thread(messages: list[str]) -> str:
     ).strip()
     messages = [HumanMessage(content=message) for message in messages]
     messages.append(SystemMessage(content=system_prompt))
-    summary = await llm(messages=messages, model="gpt-3.5-turbo", temperature=0.3)
+    summary = await llm(messages=messages, model="gpt-4", temperature=0.3)
     return summary
 
 
@@ -104,7 +105,7 @@ async def research_topic(prompt: str, max_questions: int = 5) -> str:
             HumanMessage(content=prompt),
         ],
         temperature=0.7,
-        model="gpt-3.5-turbo",
+        model="gpt-4",
     )
     questions = [
         _remove_numbered_bullet(q)
@@ -113,9 +114,9 @@ async def research_topic(prompt: str, max_questions: int = 5) -> str:
     ]  # GPT has a tendency to let the first line be "Research topic: ..."
     messages = [SystemMessage(content=researcher_system_prompt)]
     for question in questions[:max_questions]:
-        # time.sleep(7)
+        await asyncio.sleep(5)
         messages.append(HumanMessage(content=question))
-        answer = await llm(messages=messages, temperature=0.7, model="gpt-3.5-turbo")
+        answer = await llm(messages=messages, temperature=0.7, model="gpt-4")
         messages.append(AIMessage(content=answer))
         yield (question, answer)
 
@@ -138,7 +139,7 @@ async def council_meeting(prompt: str, context_msg: str, n_rounds: int = 1):
     for i in range(n_rounds):
         for name, llm in BOARD_MEMBERS:
             message = await llm(messages=messages)
-            # time.sleep(7)
+            await asyncio.sleep(5)
             message = f"{name}: {message}"
             messages.append(HumanMessage(content=message))
             yield (name, message)
