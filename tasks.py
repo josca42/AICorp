@@ -143,6 +143,3 @@ async def council_meeting(prompt: str, context_msg: str, n_rounds: int = 1):
             message = f"{name}: {message}"
             messages.append(HumanMessage(content=message))
             yield (name, message)
-
-
-### Prompts ###

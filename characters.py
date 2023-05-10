@@ -61,7 +61,7 @@ Your answer should be structured, clear, concise, and demonstrate expertise in e
 async def llm(
     system_message: str, messages: list[BaseMessage], temperature: float = 0.6
 ) -> str:
-    LLM = ChatOpenAI(temperature=temperature, model_name="gpt-3.5-turbo")
+    LLM = ChatOpenAI(temperature=temperature, model_name="gpt-4")
     messages = [SystemMessage(content=system_message)] + messages
     ai_msg = await LLM.agenerate(
         messages=[messages],
