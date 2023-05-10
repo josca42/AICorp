@@ -11,7 +11,7 @@ from interactions import (
 import asyncio
 
 # from db import crud, db, models #FIXME Uncomment, when dumping data to db
-import importlib
+# import importlib
 from tasks import (
     create_title_from_content,
     summarize_thread,
@@ -19,7 +19,6 @@ from tasks import (
     council_meeting,
 )
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-import requests
 from characters import gwynne_llm
 from dotenv import dotenv_values
 from interactions.models.discord.webhooks import Webhook
