@@ -22,6 +22,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import requests
 from characters import gwynne_llm
 from dotenv import dotenv_values
+from interactions.models.discord.webhooks import Webhook
 
 config = dotenv_values()
 
@@ -43,6 +44,10 @@ GENERAL_CHANNEL_ID = 1102855356415213640
 
 bot_token = dotenv_values()["DISCORD_BOT_TOKEN"]
 bot = Client(intents=Intents.ALL, sync_interactions=True, asyncio_debug=True)
+webhook = Webhook.from_url(
+    url="https://discord.com/api/webhooks/1103573192754335754/AsVOmL4lI63gJv8PML-bNcLWr7x89hxlyVfRsQycGi0GA40dtHyS0nBhghT9WecRKFqE",
+    client=bot,
+)
 
 
 @listen()
@@ -93,7 +98,6 @@ async def gpt_session(
 ):
     await ctx.send(f"GPT {session_type} session has started!")
     title = create_title_from_content(content=prompt)
-
     # Fetch the channel
     channel = await bot.fetch_channel(channel_id=GENERAL_CHANNEL_ID)
     if message_ids:
@@ -110,42 +114,45 @@ async def gpt_session(
 
     # Let the thinking session begin
     if session_type == "research":
+        await send_message(
+            f"Research prompt: {prompt}", channel=new_thread, user="Investigator"
+        )
         messages = []
         research_session = research_topic(prompt=prompt, max_questions=n_rounds)
         for question, answer in research_session:
             messages += [question, answer]
-            send_message(question, thread_id=new_thread.id, user="Investigator")
-            send_message(answer, thread_id=new_thread.id, user="GPT")
-            time.sleep(3)
+            await send_message(question, channel=new_thread, user="Investigator")
+            await send_message(answer, channel=new_thread, user="GPT")
     elif session_type == "council":
+        await send_message(
+            f"Council prompt: {prompt}\n\n Background context msgs: {message_ids}",
+            channel=new_thread,
+            user="Investigator",
+        )
+        messages = []
         council_session = council_meeting(prompt=prompt, context_msg=msg)
         for member, message in council_session:
             messages.append(message)
-            send_message(message, channel_id=new_thread, member=member)
-            time.sleep(3)
+            await send_message(message, channel=new_thread, user=member)
     else:
         action_plan = gwynne_llm(messages=messages + [prompt])
-        send_message(action_plan, user="Gwynne Shotwell")
+        await send_message(action_plan, user="Gwynne Shotwell")
 
     if session_type in ["research", "council"]:
         # Post summary back to channel
         summary = summarize_thread(messages=messages)
-        send_message(summary, user="Summary")
+        await ctx.send(summary)
 
 
-def send_message(message, user, thread_id=None):
-    # Split message into chunks of less than 2000 characters in order
-    # to stay within Discord's message limit.
+async def send_message(message, channel=None, user=None):
+    # Split message into chunks so as to avoid discord 2000 character limit
     msg_chunks = text_splitter.split_text(message)
     for msg_chunk in msg_chunks:
-        response = requests.post(
-            config["DISCORD_GENERAL_WEBHOOK"],
-            data={
-                "content": msg_chunk,
-                "username": user,
-                "avatar_url": AVATAR_URLS[user] if user in AVATAR_URLS else None,
-            },
-            params={"thread_id": thread_id if thread_id else None},
+        await webhook.send(
+            content=msg_chunk,
+            username=user,
+            avatar_url=AVATAR_URLS[user] if user in AVATAR_URLS else None,
+            thread=channel if channel else None,
         )
 
 

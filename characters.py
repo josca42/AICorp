@@ -61,7 +61,7 @@ Your answer should be structured, clear, concise, and demonstrate expertise in e
 def llm(
     system_message: str, messages: list[BaseMessage], temperature: float = 0.6
 ) -> str:
-    LLM = ChatOpenAI(temperature=temperature, model_name="gpt-4")
+    LLM = ChatOpenAI(temperature=temperature, model_name="gpt-3.5-turbo")
     messages = [SystemMessage(content=system_message)] + messages
     ai_msg = LLM.generate(
         messages=[messages],
@@ -74,17 +74,3 @@ gwynne_llm = partial(llm, system_message=Gwynne_shotwell, temperature=0.2)
 elon_llm = partial(llm, system_message=Elon_musk, temperature=0.7)
 steve_llm = partial(llm, system_message=Steve_jobs, temperature=0.7)
 marc_llm = partial(llm, system_message=Marc_andreessen, temperature=0.7)
-
-# To solve the problem do the following:
-# - First, work out your own solution to the problem.
-# - Then compare your solution to the student's solution \
-# and evaluate if the student's solution is correct or not.
-# Don't decide if the student's solution is correct until
-# you have done the problem yourself.
-
-
-#    - Follow the user's requirements carefully and to the letter.
-#     - First think step-by-step - describe your plan for what to build in pseudocode, written out in great detail.
-#     - Then output the code in a single code block
-#     - Minimize any other prose
-#     - Do not include any examples of how to use the written code in the code block
