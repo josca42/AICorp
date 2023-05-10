@@ -27,5 +27,7 @@ In order to run the code you need to go through the following steps:
 The quality of the dialogues does improve quite a bit by using gpt-4 instead of gpt-3.5-turbo. 
 
 
-### DB
-Added code for dumping messages to chromadb. But functionality uncommented.
+### Code
+All relevant code is more or less in the files discord.py and tasks.py.
+
+The folder /db contains some code for dumping messages to chromadb that can be used by uncommenting the code in discord.py that has been commented out.
