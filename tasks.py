@@ -19,7 +19,7 @@ load_dotenv()
 async def llm(
     messages: list, temperature=0, stop: str = None, model="gpt-3.5-turbo"
 ) -> str:
-    LLM = ChatOpenAI(temperature=temperature, model_name=model)
+    LLM = ChatOpenAI(temperature=temperature, model_name=model, request_timeout=60 * 10)
     ai_msg = await LLM.agenerate(
         messages=[messages],
         stop=stop if stop else None,
