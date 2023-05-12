@@ -44,7 +44,7 @@ GENERAL_CHANNEL_ID = 1102855356415213640
 bot_token = dotenv_values()["DISCORD_BOT_TOKEN"]
 bot = Client(intents=Intents.ALL, sync_interactions=True, asyncio_debug=True)
 webhook = Webhook.from_url(
-    url="https://discord.com/api/webhooks/1103573192754335754/AsVOmL4lI63gJv8PML-bNcLWr7x89hxlyVfRsQycGi0GA40dtHyS0nBhghT9WecRKFqE",
+    url=config["DISCORD_GENERAL_WEBHOOK"],
     client=bot,
 )
 
@@ -98,7 +98,7 @@ async def gpt_session(
     await ctx.send(f"GPT {session_type} session has started!")
     title = await create_title_from_content(content=prompt)
     # Fetch the channel
-    channel = await bot.fetch_channel(channel_id=GENERAL_CHANNEL_ID)
+    channel = await bot.fetch_channel(channel_id=config["GENERAL_CHANNEL_ID"])
     if message_ids:
         msg = ""
         for message_id in message_ids.split(","):

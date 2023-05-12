@@ -13,11 +13,12 @@ Currently available role playing scenarios are:
 In order to run the code you need to go through the following steps:
 
 - Create a [discord server](https://www.youtube.com/watch?v=Z8ND1XcUomU), create a [discord bot](https://discordpy.readthedocs.io/en/latest/discord.html) and create a [webhook](https://www.youtube.com/watch?v=fKksxz2Gdnc). Notice that you will need to give the discord bot either admin privileges or another privilege that allows it to read messages.
-- Then create a .env file in the root of the project and add the following variables:
+- Then create a .env file in the root of the project and add the following (where the GENERAL_CHANNEL_ID is the channel_id of the channel you want the bot to listen to. Which should be the same channel as the webhook is created for):
 
     OPENAI_API_KEY=<OPENAI_API_KEY> <br>
     DISCORD_BOT_TOKEN=<DISCORD_BOT_TOKEN> <br>
-    DISCORD_GENERAL_WEBHOOK=<DISCORD_GENERAL_WEBHOOK>
+    DISCORD_GENERAL_WEBHOOK=<DISCORD_GENERAL_WEBHOOK> <br>
+    GENERAL_CHANNEL_ID=<GENERAL_CHANNEL_ID>
 
 - Last but not least, you need to install the requirements by running the following command:
 
