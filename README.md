@@ -32,6 +32,8 @@ All relevant code is more or less in the files discord.py and tasks.py. Characte
 
 
 ### Examples
+Below is an example of an initial research prompt that an "investigator" GPT uses to create 4 questions and then ask them to a "researcher" GPT.
+
 <table><tr>
 <td> <img src="./assets/img_1.png" alt="Image 1" width="250px"/> </td>
 <td> <img src="./assets/img_2.png" alt="Image 2" width="250px"/> </td>
