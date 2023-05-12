@@ -157,36 +157,4 @@ async def send_message(message, channel=None, user=None):
         )
 
 
-# FIXME: Uncomment when dumping data to db
-# @listen()
-# async def on_message_create(event):
-#     msg = event.message
-#     author = msg.author.display_name
-#     if author != "GPT":
-#         msg_obj = models.DiscordMessage(
-#             id=msg.id,
-#             author=author,
-#             channel_id=msg._channel_id,
-#             content=msg.content,
-#             timestamp=msg.timestamp,
-#         )
-#         crud.discord.create(msg_obj)
-
-
-# FIXME: Uncomment when dumping data to db
-# @listen()
-# async def on_message_update(event):
-#     msg = event.after
-#     msg_obj = models.DiscordMessage(
-#         id=msg.id,
-#         author=msg.author.display_name,
-#         channel_id=msg._channel_id,
-#         content=msg.content,
-#         timestamp=msg.timestamp,
-#     )
-#     crud.discord.update(msg_obj)
-
-#     print(f"message received: {event.message.content}")
-
-
 bot.start(bot_token)
