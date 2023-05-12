@@ -28,6 +28,13 @@ The quality of the dialogues does improve quite a bit by using gpt-4 instead of 
 
 
 ### Code
-All relevant code is more or less in the files discord.py and tasks.py.
+All relevant code is more or less in the files discord.py and tasks.py. Characters.py just contains some prompts for impersonating different characters.
 
-The folder /db contains some code for dumping messages to chromadb that can be used by uncommenting the code in discord.py that has been commented out.
+
+### Examples
+<table><tr>
+<td> <img src="./assets/img_1.png" alt="Image 1" width="250px"/> </td>
+<td> <img src="./assets/img_2.png" alt="Image 2" width="250px"/> </td>
+<td> <img src="./assets/img_3.png" alt="Image 2" width="250px"/> </td>
+<td> <img src="./assets/img_4.png" alt="Image 2" width="250px"/> </td>
+</tr></table>
